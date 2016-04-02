@@ -1,0 +1,29 @@
+{
+  "name": "3d_world",
+  "version": "1.0.0",
+  "description": "babylonJS",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WebDevJ/3d_world.git"
+  },
+  "author": "WebDevJ",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WebDevJ/3d_world/issues"
+  },
+  "homepage": "https://github.com/WebDevJ/3d_world#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.4.1",
+    "env": "0.0.2",
+    "express": "^4.13.4",
+    "method-override": "^2.3.5",
+    "morgan": "^1.7.0",
+    "path": "^0.12.7"
+  }
+}

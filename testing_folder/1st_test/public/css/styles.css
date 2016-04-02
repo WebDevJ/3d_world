@@ -8,8 +8,6 @@ body {
               padding: 0;
               margin: auto;
               overflow: hidden;
-              touch-action: none;
-              /*stop brower from monitoring touch action of user now can use on mobile touch screen phone*/
           }
           #renderCanvas {
 /*              background-color: black;

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- my basic set up notes -->
 <html>
   <head>
     <meta charset="utf-8">
@@ -8,14 +9,15 @@
     
     <link rel="stylesheet" href="/css/styles.css" media="screen" title="no title" charset="utf-8">
 
-    <script src="/js/babylon.js"></script>
-    <script src="/js/hand.minified-1.2.js"></script>
-    <script src="/js/light.js"></script>
-    <script src="/js/basics.js"></script> 
+    <script src="/js/babylon.js"></script> <!-- our main lib we are runing, I added a console log so we know it is connecting.--> 
+    <script src="/js/hand.minified-1.2.js"></script> <!-- allows us to have touch assets -->
+    <!-- <script src="/js/light.js"></script --> 
+    <!-- set up for light assets -->
+    <script src="/js/main.js"></script> <!-- this is our main file that we do most of our work.  -->
     
   </head>
   <body>
-    <p> babylonJS</p>
-      <canvas id="renderCanvas" width="600" height="600" ></canvas>
+    <p> babylonJS :-) </p>
+      <canvas id="renderCanvas" width="600" height="600" ></canvas> <!-- the most important is the canvas we are viewing. rember that the above id# is being used in the main.js  -->
   </body>
   </html>
