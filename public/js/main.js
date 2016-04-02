@@ -65,6 +65,13 @@ function startBabylonJS() {
         var ground = new BABYLON.Mesh.CreateGround("ground", 52, 52, 12, scene);
 
         ground.checkCollisions = true;
+// reflections on the meshes needs to have mirror applied to ground mesh
+        var mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
+        mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+        mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true); //Create a mirror texture
+        mirrorMaterial.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, 0.0);
+        mirrorMaterial.reflectionTexture.level = 0.6;//Select the level (0.0 > 1.0) of the reflection
+        ground.material = mirrorMaterial;
 
         // ground.diffuse = new BABYLON.Color3.Black();
 // ----------------------- light
@@ -77,11 +84,13 @@ function startBabylonJS() {
         light.diffuse = new BABYLON.Color3.Blue(); 
         // This will be the color of my BACKGROUND
 // ----------------------- mesh(3d object)
+
 //var cube = BABYLON.MeshBuilder.CreateBox("box", {height: 5, faceColors: myColors}, scene);
 
-        var cube = new BABYLON.Mesh.CreateBox("box", 2, scene);
+        // var cube = new BABYLON.Mesh.CreateBox("box", 2, scene);
+var cube = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
 
-        cube.position = new BABYLON.Vector3(0, 1.5, 0);
+        cube.position = new BABYLON.Vector3(0, 3, 0);
  
         cube.checkCollisions = true;
 // add materials to meshes
@@ -89,9 +98,14 @@ var cubeMat = new BABYLON.StandardMaterial("cubeMat", scene);
 //select mesh I want to apply material to
 cube.material = cubeMat;
 // the color of object when light hits it is caled diffuseColor
-cubeMat.diffuseColor = BABYLON.Color3.Red();
+cubeMat.diffuseColor = new BABYLON.Color3.Red();
 // using .Color3 here to get red
+// cubeMat.diffuseTexture = new BABYLON.Texture("/assets/wood.jpg", scene);
 
+// cubeMat.bumpTexture = new BABYLON.Texture("normalMap.png", scene);
+cubeMat.wireframe = true;
+//add adove mirror to sphere 
+mirrorMaterial.reflectionTexture.renderList.push(cube);
 
 
 //----------
@@ -103,17 +117,36 @@ cubeMat.diffuseColor = BABYLON.Color3.Red();
 
 var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
 cube2.material = cubeMat2;
-cubeMat2.diffuseColor = BABYLON.Color3.Blue();        
+cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
+//addd mirror refelection
+mirrorMaterial.reflectionTexture.renderList.push(cube2);  
+
 //----------
         var cube3 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
         cube3.position = new BABYLON.Vector3(5, 1.5, 0);
 
         cube3.checkCollisions = true;
+
 var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
 cube3.material = cubeMat3;
-cubeMat3.diffuseColor = BABYLON.Color3.Green();  
+cubeMat3.diffuseColor = new BABYLON.Color3.Green();
+//add adove mirror to cube 
+mirrorMaterial.reflectionTexture.renderList.push(cube3);  
 
+
+
+
+
+ 
+
+// cube.onPointerDown = function (pickResult) {
+//             // if the click hits square execute:
+//             if (pickResult.hit) {
+//                 console.log('hit');
+
+//             }
+ 
 
 
 // -----------------------
@@ -129,6 +162,8 @@ cubeMat3.diffuseColor = BABYLON.Color3.Green();
             cube3.rotation.x += 0.03;
 
             scene.render();
+
+
 // leave this truned OFF
             // engine.clear(new BABYLON.Color3(0.2, 0.2, 0.3), true);
 // this code clears the frame and shows a Color3 asset color.
