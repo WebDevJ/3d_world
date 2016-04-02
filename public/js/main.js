@@ -78,11 +78,21 @@ function startBabylonJS() {
         // This will be the color of my BACKGROUND
 // ----------------------- mesh(3d object)
 //var cube = BABYLON.MeshBuilder.CreateBox("box", {height: 5, faceColors: myColors}, scene);
+
         var cube = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
         cube.position = new BABYLON.Vector3(0, 1.5, 0);
  
         cube.checkCollisions = true;
+// add materials to meshes
+var cubeMat = new BABYLON.StandardMaterial("cubeMat", scene);
+//select mesh I want to apply material to
+cube.material = cubeMat;
+// the color of object when light hits it is caled diffuseColor
+cubeMat.diffuseColor = BABYLON.Color3.Red();
+// using .Color3 here to get red
+
+
 
 //----------
         var cube2 = new BABYLON.Mesh.CreateBox("box", 2, scene);
@@ -90,13 +100,19 @@ function startBabylonJS() {
         cube2.position = new BABYLON.Vector3(-5, 1.5, 0);
  
         cube2.checkCollisions = true;
+
+var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
+cube2.material = cubeMat2;
+cubeMat2.diffuseColor = BABYLON.Color3.Blue();        
 //----------
         var cube3 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
         cube3.position = new BABYLON.Vector3(5, 1.5, 0);
 
         cube3.checkCollisions = true;
-
+var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
+cube3.material = cubeMat3;
+cubeMat3.diffuseColor = BABYLON.Color3.Green();  
 
 
 
