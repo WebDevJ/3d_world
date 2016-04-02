@@ -146,9 +146,33 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
 //                 console.log('hit');
 
 //             }
- 
 
 
+//------------------------------------ 
+//procedural texture, this is interesting but not sure if I will use it. commenting out for now. 
+//what it dose is put dynamic upating texture, this example is of text. 
+//------------------------------------
+ var dynamicTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
+        dynamicTexture.hasAlpha = true;
+        cubeMat3.diffuseTexture = dynamicTexture;
+        cubeMat3.backFaceCulling = false;
+        //need for it to work
+        var count = 0;
+
+ // place in register before render       
+  scene.registerBeforeRender(function () {
+            var textureContext = dynamicTexture.getContext();
+            var size = dynamicTexture.getSize();
+            var text = count.toString();
+            textureContext.clearRect(0, 0, size.width, size.height);
+            textureContext.font = "bold 120px Calibri";
+            var textSize = textureContext.measureText(text);
+            textureContext.fillStyle = "white";
+            textureContext.fillText(text, (size.width - textSize.width) / 2, (size.height - 120) / 2);
+            dynamicTexture.update();
+            count++;
+        });
+//------------------------------------
 // -----------------------
         // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
         engine.runRenderLoop(function () {
@@ -164,6 +188,7 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
             scene.render();
 
 
+            //count++;
 // leave this truned OFF
             // engine.clear(new BABYLON.Color3(0.2, 0.2, 0.3), true);
 // this code clears the frame and shows a Color3 asset color.
