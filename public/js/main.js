@@ -11,6 +11,8 @@ var light;
 
 //game
 var started = true;
+console.log(started);
+
 
 
 document.addEventListener("DOMContentLoaded", startBabylonJS, false);
@@ -31,8 +33,10 @@ function startBabylonJS() {
 //MAIN camera below
 
 //new ArcRotateCamera(name, alpha, beta, radius, target, scene)
-
-        var arcCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), scene); 
+// last find I turned off @ 9am
+        // var arcCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), scene); 
+        //  arcCamera.attachControl(canvas); 
+        // arcCamera.checkCollisions = true;
 
         // var arcCamera = new BABYLON.GamepadCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), scene); 
 
@@ -49,24 +53,26 @@ function startBabylonJS() {
 
 // NOTE - Very important, you need this line below because it allows the user to move around. based on arrow keys mouse movements
 
-        arcCamera.attachControl(canvas); 
-        arcCamera.checkCollisions = true;
+       
 
  
 
 // NOTE - if you have more then one camera activated it goes with 1st one    
-        // camera = new BABYLON.FreeCamera("walkAroundCam", new BABYLON.Vector3(0, 1, -5), scene);
+        camera = new BABYLON.FreeCamera("walkAroundCam", new 
 
-        // camera.attachControl(canvas); 
+            BABYLON.Vector3(13, 0.5, 7), scene);
+        //starting position of game 
+
+        camera.attachControl(canvas); 
 
 
 // == this carmera with .applyGravity allows you to walk around instead of fly   
         // camera.attachControl(canvas);
 
-        // camera.checkCollisions = true;
+        camera.checkCollisions = true;
 
 // NOTE - .checkCollisions MUST also be on your mesh to work and pervent going through object 
-        // camera.applyGravity = true;
+        camera.applyGravity = true;
 
 
 // we can have more then one camera
@@ -263,10 +269,13 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
         
     var onLose = function () {
         
-        arcCamera.position = new BABYLON.Vector3(0, 0.5, 0);
+        //camera.position = new BABYLON.Vector3(0, 10, 0);
 
-        document.getElementById("gameOver").className = "";
+        document.getElementById("gameOver").className = "YOU LOST";
+        console.log(gameOver);
+
         started = false;
+        console.log(started);
 
         
     };
@@ -279,7 +288,7 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
         //     return;
         // }
 
-        var point = arcCamera.position.clone();
+        var point = camera.position.clone();
         point.y -= 0.5;
         if (!ground.intersectsPoint(point)) {
             onLose();
