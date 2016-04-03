@@ -9,6 +9,10 @@ var camera;
 var mesh; // or 3d object var
 var light;
 
+//game
+var started = true;
+
+
 document.addEventListener("DOMContentLoaded", startBabylonJS, false);
 
 function startBabylonJS() {
@@ -221,6 +225,9 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
  //            count++;
  //        });
 //------------------------------------
+
+
+
 // -----------------------
         // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
         engine.runRenderLoop(function () {
@@ -235,11 +242,54 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
 
             scene.render();
 
+            if (!started) {
+                return;
+            }
+
+            checkCollisions(); // to tell if player fell off 
+
+        });
+
+    document.getElementById("gameOver").addEventListener("click", function() {
+        started = true;
+        document.getElementById("gameOver").className = "hidden";
+        direction = new BABYLON.Vector3(0, 0, 0);
+    });
+           
+// GAme logic
+ // Lose
+
+    
+        
+    var onLose = function () {
+        
+        arcCamera.position = new BABYLON.Vector3(0, 0.5, 0);
+
+        document.getElementById("gameOver").className = "";
+        started = false;
+
+        
+    };
+
+    // Collisions to check if player fell off 
+    var checkCollisions = function() {
+        // Target to match
+        // if (BABYLON.Vector3.Distance(arcCamera.position, cube2.emitter) < 1.2) {
+        //     onLose();
+        //     return;
+        // }
+
+        var point = arcCamera.position.clone();
+        point.y -= 0.5;
+        if (!ground.intersectsPoint(point)) {
+            onLose();
+        }
+    };
+
 
             //count++;
 // leave this truned OFF
             // engine.clear(new BABYLON.Color3(0.2, 0.2, 0.3), true);
 // this code clears the frame and shows a Color3 asset color.
-        });
     }
 }
