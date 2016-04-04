@@ -8,7 +8,6 @@ var scene;
 var camera;
 var mesh; // or 3d object var
 var light;
-
 //game
 var started = true;
 console.log(started);
@@ -25,15 +24,17 @@ function startBabylonJS() {
 
          engine.enableOfflineSupport = false;
 
-//--------- a scene MUST have a camera
-// or u get an error
+    //--------- a scene MUST have a camera
+    // or u get an error
         scene = new BABYLON.Scene(engine);
+        scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+
         // we create the scene and give it the var engine. Lastly you MUST tell the var scene to render it's self *scene.render();* in the runRenderLoop method . 
 
-//MAIN camera below
+    //MAIN camera below
 
-//new ArcRotateCamera(name, alpha, beta, radius, target, scene)
-// last find I turned off @ 9am
+    //new ArcRotateCamera(name, alpha, beta, radius, target, scene)
+    // last find I turned off @ 9am
         // var arcCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(0, 0, 0), scene); 
         //  arcCamera.attachControl(canvas); 
         // arcCamera.checkCollisions = true;
@@ -51,42 +52,42 @@ function startBabylonJS() {
         //Y is (up and down)
         //z is (3d dim)
 
-// NOTE - Very important, you need this line below because it allows the user to move around. based on arrow keys mouse movements
+    // NOTE - Very important, you need this line below because it allows the user to move around. based on arrow keys mouse movements
 
        
 
  
 
-// NOTE - if you have more then one camera activated it goes with 1st one    
+    // NOTE - if you have more then one camera activated it goes with 1st one    
         camera = new BABYLON.FreeCamera("walkAroundCam", new 
 
-            BABYLON.Vector3(13, 0.5, 7), scene);
+            BABYLON.Vector3(13, 5, 7), scene);
         //starting position of game 
 
         camera.attachControl(canvas); 
 
 
-// == this carmera with .applyGravity allows you to walk around instead of fly   
-        // camera.attachControl(canvas);
+    // == this carmera with .applyGravity allows you to walk around instead of fly   
 
         camera.checkCollisions = true;
 
-// NOTE - .checkCollisions MUST also be on your mesh to work and pervent going through object 
+    // NOTE - .checkCollisions MUST also be on your mesh to work and pervent going through object 
+
         camera.applyGravity = true;
 
 
-// we can have more then one camera
+    // we can have more then one camera
          // birds eye view camera  
-// var camera =  new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI / 20, 150, BABYLON.Vector3.Zero(), scene);
+    // var camera =  new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI / 20, 150, BABYLON.Vector3.Zero(), scene);
 
-//2nd you create light and meshes("floor","cube")              
+    //2nd you create light and meshes("floor","cube")              
 
-// ----------------------- floor
-//var ground = BABYLON.Mesh.CreateGround("name", sizeOfFloor, scene);
+    // ----------------------- floor
+    //var ground = BABYLON.Mesh.CreateGround("name", sizeOfFloor, scene);
         var ground = new BABYLON.Mesh.CreateGround("ground", 52, 52, 12, scene);
 
-        ground.checkCollisions = true;
-// reflections on the meshes needs to have mirror applied to ground mesh
+     var a =   ground.checkCollisions = true;
+    // reflections on the meshes needs to have mirror applied to ground mesh
         var mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
         mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
         mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true); //Create a mirror texture
@@ -101,8 +102,22 @@ function startBabylonJS() {
         // ground.material = groundMaterial;
 
         // ground.diffuse = new BABYLON.Color3.Black();
+    //
+    //created skybox
 
-// creating stars, hope this works
+    var skybox = BABYLON.Mesh.CreateBox("skyBox", 800.0, scene);
+    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox", scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
+    // so you don't fall out my sky box  
+            skybox.checkCollisions = true;
+
+
+    // creating stars, hope this works
     // myStars
     var myStars = new BABYLON.ParticleSystem("particles", 4000, scene);
     myStars.particleTexture = new BABYLON.Texture("assets/star.png", scene);
@@ -125,13 +140,13 @@ function startBabylonJS() {
     myStars.gravity = new BABYLON.Vector3(0, 5, 0);
     myStars.emitter = new BABYLON.Vector3(0, -2, 0);
     myStars.start();
-//wow it worked
+    //wow it worked
 
 
 
 
-// ----------------------- light
-//var light = BABYLON.HemisphericLight("light", directionOfLight, scene);
+    // ----------------------- light
+    //var light = BABYLON.HemisphericLight("light", directionOfLight, scene);
         light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
         // type of light asset .HemisphericLight
         light = new BABYLON.PointLight("pointlight", new BABYLON.Vector3(5, 10, -5), scene);
@@ -139,58 +154,60 @@ function startBabylonJS() {
          // I am choosing the color of the light for the scence
         light.diffuse = new BABYLON.Color3.Blue(); 
         // This will be the color of my BACKGROUND
-// ----------------------- mesh(3d object)
+    // ----------------------- mesh(3d object)
 
-//var cube = BABYLON.MeshBuilder.CreateBox("box", {height: 5, faceColors: myColors}, scene);
+    //var cube = BABYLON.MeshBuilder.CreateBox("box", {height: 5, faceColors: myColors}, scene);
 
         // var cube = new BABYLON.Mesh.CreateBox("box", 2, scene);
-var cube = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
+    var cube = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
 
         cube.position = new BABYLON.Vector3(0, 3, 0);
  
         cube.checkCollisions = true;
-// add materials to meshes
-var cubeMat = new BABYLON.StandardMaterial("cubeMat", scene);
-//select mesh I want to apply material to
-cube.material = cubeMat;
-// the color of object when light hits it is caled diffuseColor
-cubeMat.diffuseColor = new BABYLON.Color3.Red();
-// using .Color3 here to get red
+    // add materials to meshes
+    var cubeMat = new BABYLON.StandardMaterial("cubeMat", scene);
+    //select mesh I want to apply material to
+    cube.material = cubeMat;
+    // the color of object when light hits it is caled diffuseColor
+    cubeMat.diffuseColor = new BABYLON.Color3.Red();
+    // using .Color3 here to get red
+            cube.applyGravity = false;
 
 
 
-cubeMat.wireframe = true;
-//add adove mirror to sphere 
-mirrorMaterial.reflectionTexture.renderList.push(cube);
+
+    cubeMat.wireframe = true;
+    //add adove mirror to sphere 
+    mirrorMaterial.reflectionTexture.renderList.push(cube);
 
 
-//----------
+    //----------
         var cube2 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
         cube2.position = new BABYLON.Vector3(-5, 1.5, 0);
  
         cube2.checkCollisions = true;
 
-var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
-cube2.material = cubeMat2;
-cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
-cubeMat2.diffuseTexture = new BABYLON.Texture("assets/wood.jpg", scene);
-//addd mirror refelection
-mirrorMaterial.reflectionTexture.renderList.push(cube2);  
+    var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
+    cube2.material = cubeMat2;
+    cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
+    cubeMat2.diffuseTexture = new BABYLON.Texture("assets/wood.jpg", scene);
+    //addd mirror refelection
+    mirrorMaterial.reflectionTexture.renderList.push(cube2);  
 
-//----------
+    //----------
         var cube3 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
         cube3.position = new BABYLON.Vector3(5, 1.5, 0);
 
         cube3.checkCollisions = true;
 
-var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
-cube3.material = cubeMat3;
-cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
-cubeMat3.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene);
-//add adove mirror to cube 
-mirrorMaterial.reflectionTexture.renderList.push(cube3);  
+    var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
+    cube3.material = cubeMat3;
+    cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
+    cubeMat3.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene);
+    //add adove mirror to cube 
+    mirrorMaterial.reflectionTexture.renderList.push(cube3);  
 
 
 
@@ -198,18 +215,18 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
 
  
 
-// cube.onPointerDown = function (pickResult) {
-//             // if the click hits square execute:
-//             if (pickResult.hit) {
-//                 console.log('hit');
+    // cube.onPointerDown = function (pickResult) {
+    //             // if the click hits square execute:
+    //             if (pickResult.hit) {
+    //                 console.log('hit');
 
-//             }
+    //             }
 
 
-//------------------------------------ 
-//procedural texture, this is interesting but not sure if I will use it. commenting out for now. 
-//what it dose is put a dynamic upating texture, this example is of text. 
-//------------------------------------
+    //------------------------------------ 
+    //procedural texture, this is interesting but not sure if I will use it. commenting out for now. 
+    //what it dose is put a dynamic upating texture, this example is of text. 
+    //------------------------------------
  // var dynamicTexture = new BABYLON.DynamicTexture("dynamic texture", 512, scene, true);
  //        dynamicTexture.hasAlpha = true;
  //        cubeMat3.diffuseTexture = dynamicTexture;
@@ -230,11 +247,14 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
  //            dynamicTexture.update();
  //            count++;
  //        });
-//------------------------------------
+    //------------------------------------
 
 
 
-// -----------------------
+
+
+
+    // -----------------------
         // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
         engine.runRenderLoop(function () {
             // .runRenderLoop will render every Frame
@@ -258,47 +278,94 @@ mirrorMaterial.reflectionTexture.renderList.push(cube3);
 
     document.getElementById("gameOver").addEventListener("click", function() {
         started = true;
+        console.log('user clicked');
         document.getElementById("gameOver").className = "hidden";
-        direction = new BABYLON.Vector3(0, 0, 0);
+        //direction = new BABYLON.Vector3(0, 0, 0);
     });
            
-// GAme logic
- // Lose
+    // GAme logic
+    // Lose
 
     
         
-    var onLose = function () {
+    var loser = function () {
         
         //camera.position = new BABYLON.Vector3(0, 10, 0);
-
-        document.getElementById("gameOver").className = "YOU LOST";
-        console.log(gameOver);
+        // change class name so game over div displays
+        document.getElementById("gameOver").className = "";
+        //
+        //console.log(gameOver);
 
         started = false;
-        console.log(started);
+        console.log( started +" started set to false , gameOver");
 
         
     };
+
+      scene.onPointerDown = function (evt, pickResult) {
+        
+        if (pickResult.hit) {
+            //loser();
+        }
+    };
+
+
+    // canvas.addEventListener("mousedown", function (evt) {
+    // var pickResult = scene.pick(evt.clientX, evt.clientY);
+    // if (pickResult.hit ) {
+    //     loser();
+    // }
+//});
 
     // Collisions to check if player fell off 
     var checkCollisions = function() {
         // Target to match
         // if (BABYLON.Vector3.Distance(arcCamera.position, cube2.emitter) < 1.2) {
-        //     onLose();
+        //     loser();
         //     return;
         // }
 
-        var point = camera.position.clone();
-        point.y -= 0.5;
-        if (!ground.intersectsPoint(point)) {
-            onLose();
+        // var point = camera.onCollide;
+        // //point.y -= 0.5;
+        // if (!ground.intersectsPoint(point)) {
+
+        //     loser();
+        // }
+
+    //------------------
+            // if (cube.intersectsPoint(pointToIntersect)) {
+            //                 loser();
+        
+        //  cube.onCollide = function(){
+           
+        //     if (balloon3.intersectsPoint(pointToIntersect)) {
+        //                     loser();
+        // }
+    //---------------KIND OF WoRKING ### 1 ###
+        cube.onCollide = function() {
+            if(started === true){    
+            loser();
+            }
+
         }
-    };
+    //---------------KIND OF WoRKING ### 2 ###
+    // var point = cube.position.clone();
+    //     point.y -= 0.5;
+    //     if (!skybox.intersectsPoint(point)) {
+    //         //!ground = gameOver trigged
+    //         //else loser function dose not run
+    //         loser();
+    //     }
+    //---------------KIND OF WoRKING 
+
+       
+
+    };// close checkCollisions function
 
 
             //count++;
-// leave this truned OFF
+    // leave this truned OFF
             // engine.clear(new BABYLON.Color3(0.2, 0.2, 0.3), true);
-// this code clears the frame and shows a Color3 asset color.
+    // this code clears the frame and shows a Color3 asset color.
     }
 }
