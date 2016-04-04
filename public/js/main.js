@@ -27,7 +27,30 @@ function startBabylonJS() {
     //--------- a scene MUST have a camera
     // or u get an error
         scene = new BABYLON.Scene(engine);
-        scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+        
+        // var gravityVector = new BABYLON.Vector3(0,-9.81, 0);
+        // var physicsPlugin = new BABYLON.CannonJSPlugin();
+        // scene.enablePhysics(gravityVector, physicsPlugin);
+
+
+        scene.enablePhysics(new BABYLON.Vector3(0, -100, 0), new BABYLON.CannonJSPlugin());
+
+
+        //old depricated
+        
+        //scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+
+        // now that I have gravity, next I set up physics
+        //old depricated
+        //scene.enablePhysics();
+        //scene.setGravity(new BABYLON.Vector3(0,-10,0));
+        
+
+        // scene.getPhysicsEngine().setGravity(new BABYLON.Vector3(0, -0.5, 0, new BABYLON.OimoJSPlugin()));
+        
+        //cannon.js:5756 Uncaught TypeError: Cannot read property 'calculateWorldAABB' of undefined
+
+        // below I test this on 'cubeTest' mesh
 
         // we create the scene and give it the var engine. Lastly you MUST tell the var scene to render it's self *scene.render();* in the runRenderLoop method . 
 
@@ -61,7 +84,7 @@ function startBabylonJS() {
     // NOTE - if you have more then one camera activated it goes with 1st one    
         camera = new BABYLON.FreeCamera("walkAroundCam", new 
 
-            BABYLON.Vector3(13, 5, 7), scene);
+            BABYLON.Vector3(13, 150, 7), scene);
         //starting position of game 
 
         camera.attachControl(canvas); 
@@ -85,6 +108,8 @@ function startBabylonJS() {
     // ----------------------- floor
     //var ground = BABYLON.Mesh.CreateGround("name", sizeOfFloor, scene);
         var ground = new BABYLON.Mesh.CreateGround("ground", 52, 52, 12, scene);
+             // NOT sure may need box for physics to work with collsions
+    // var ground = new BABYLON.Mesh.CreateBox("ground", 52, scene);  
 
      var a =   ground.checkCollisions = true;
     // reflections on the meshes needs to have mirror applied to ground mesh
@@ -103,18 +128,18 @@ function startBabylonJS() {
 
         // ground.diffuse = new BABYLON.Color3.Black();
     //
-    //created skybox
+    //created my own little galaxy universe /
 
-    var skybox = BABYLON.Mesh.CreateBox("skyBox", 800.0, scene);
-    var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-    skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox", scene);
-    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-    skybox.material = skyboxMaterial;
-    // so you don't fall out my sky box  
-            skybox.checkCollisions = true;
+    var universe = BABYLON.Mesh.CreateBox("skyBox", 800.0, scene);
+    var universeMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+    universeMaterial.backFaceCulling = false;
+    universeMaterial.reflectionTexture = new BABYLON.CubeTexture("assets/skybox", scene);
+    universeMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    universeMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    universeMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    universe.material = universeMaterial;
+    // so you don't fall out my world / galaxy  
+    universe.checkCollisions = true;
 
 
     // creating stars, hope this works
@@ -172,7 +197,6 @@ function startBabylonJS() {
     cubeMat.diffuseColor = new BABYLON.Color3.Red();
     // using .Color3 here to get red
             cube.applyGravity = false;
-
 
 
 
@@ -249,8 +273,36 @@ function startBabylonJS() {
  //        });
     //------------------------------------
 
+    var cubeTest = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
+
+        cubeTest.position = new BABYLON.Vector3(13, 150, 10);
+        cubeTest.applyGravity = true;
+        // testing physics engine
+
+        // cubeTest.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7});
+
+            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
+
+        //ERROR -   Uncaught TypeError: Cannot use 'in' operator to search for 'friction' in 0.25
+
+        //fixed -> changed to .SphereImpostor
+        //ERROR -  cannon.js:5756 Uncaught TypeError: Cannot read property 'calculateWorldAABB' 
+
+        //fixed ->  
+         //'scene.getPhysicsEngine().setGravity()'
+        
+        // new BABYLON.PhysicsImpostor(object: IPhysicsEnabledObject, type: number, options: PhysicsImpostorParameters, scene:BABYLON.Scene);
+
+        //sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
 
 
+        // BABYLON.PhysicsImpostor.SphereImpostor;
+        // BABYLON.PhysicsImpostor.BoxImpostor;
+        // BABYLON.PhysicsImpostor.PlaneImpostor;
+        // BABYLON.PhysicsImpostor.MeshImpostor;
+        // BABYLON.PhysicsImpostor.CylinderImpostor;
+        // BABYLON.PhysicsImpostor.ParticleImpostor;
+        // BABYLON.PhysicsImpostor.HeightmapImpostor;
 
 
 
@@ -276,38 +328,60 @@ function startBabylonJS() {
 
         });
 
-    document.getElementById("gameOver").addEventListener("click", function() {
-        started = true;
-        console.log('user clicked');
-        document.getElementById("gameOver").className = "hidden";
-        //direction = new BABYLON.Vector3(0, 0, 0);
-    });
+
+    // document.getElementById("gameOver").addEventListener("click", function() {
+    //     started = true;
+    //     console.log('user clicked');
+    //     document.getElementById("gameOver").className = "hidden";
+    //     //direction = new BABYLON.Vector3(0, 0, 0);
+    // });
            
     // GAme logic
     // Lose
+    // I need the carmera to know when I hit the ground
+    var point = camera.position.clone();
+    point.y -= 0.5;
+    if (ground.intersectsPoint(point)) {
 
-    
+            camera.onCollide = function() {
+            
+            started = false;
+
+            if(started === false){    
+            loser();
+            }
+        }
+
+    }
+     
+
         
     var loser = function () {
         
         //camera.position = new BABYLON.Vector3(0, 10, 0);
         // change class name so game over div displays
+
+        
+
+
+        
+
         document.getElementById("gameOver").className = "";
+        
         //
         //console.log(gameOver);
 
-        started = false;
         console.log( started +" started set to false , gameOver");
 
         
     };
 
-      scene.onPointerDown = function (evt, pickResult) {
+    //   scene.onPointerDown = function (evt, pickResult) {
         
-        if (pickResult.hit) {
-            //loser();
-        }
-    };
+    //     if (pickResult.hit) {
+    //         //loser();
+    //     }
+    // };
 
 
     // canvas.addEventListener("mousedown", function (evt) {
@@ -336,18 +410,19 @@ function startBabylonJS() {
             // if (cube.intersectsPoint(pointToIntersect)) {
             //                 loser();
         
-        //  cube.onCollide = function(){
+         //carmera.onCollide = function(){
            
-        //     if (balloon3.intersectsPoint(pointToIntersect)) {
-        //                     loser();
-        // }
+           // if (balloon3.intersectsPoint(pointToIntersect)) {
+                            //loser();
+                            //}
+        //}
     //---------------KIND OF WoRKING ### 1 ###
-        cube.onCollide = function() {
-            if(started === true){    
-            loser();
-            }
+        // camera.onCollide = function() {
+        //     if(started === true){    
+        //     loser();
+        //     }
 
-        }
+        // }
     //---------------KIND OF WoRKING ### 2 ###
     // var point = cube.position.clone();
     //     point.y -= 0.5;
