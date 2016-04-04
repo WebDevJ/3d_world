@@ -288,8 +288,8 @@ function startBabylonJS() {
             cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 50, restitution: 0.0 });
 
             // camera.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
-
-            ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
+//TURNED OFF for game state to work
+            // ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
 
         //ERROR -   Uncaught TypeError: Cannot use 'in' operator to search for 'friction' in 0.25
 
@@ -400,6 +400,7 @@ function startBabylonJS() {
 
         if (cubeTest.intersectsMesh(ground, true)) {
             loser();
+            //turn physics on ground off to work
 
 
         }
