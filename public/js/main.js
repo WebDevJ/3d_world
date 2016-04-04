@@ -33,12 +33,12 @@ function startBabylonJS() {
         // scene.enablePhysics(gravityVector, physicsPlugin);
 
 
-        scene.enablePhysics(new BABYLON.Vector3(0, -100, 0), new BABYLON.CannonJSPlugin());
+        scene.enablePhysics(new BABYLON.Vector3(0, -1, 0), new BABYLON.CannonJSPlugin());
 
 
         //old depricated
         
-        //scene.gravity = new BABYLON.Vector3(0, -0.5, 0);
+        scene.gravity = new BABYLON.Vector3(0, -0.1, 0);
 
         // now that I have gravity, next I set up physics
         //old depricated
@@ -82,7 +82,7 @@ function startBabylonJS() {
  
 
     // NOTE - if you have more then one camera activated it goes with 1st one    
-        camera = new BABYLON.FreeCamera("walkAroundCam", new 
+    var    camera = new BABYLON.FreeCamera("walkAroundCam", new 
 
             BABYLON.Vector3(13, 150, 7), scene);
         //starting position of game 
@@ -214,7 +214,7 @@ function startBabylonJS() {
 
     var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
     cube2.material = cubeMat2;
-    cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
+    // cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
     cubeMat2.diffuseTexture = new BABYLON.Texture("assets/wood.jpg", scene);
     //addd mirror refelection
     mirrorMaterial.reflectionTexture.renderList.push(cube2);  
@@ -228,7 +228,7 @@ function startBabylonJS() {
 
     var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
     cube3.material = cubeMat3;
-    cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
+     cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
     cubeMat3.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene);
     //add adove mirror to cube 
     mirrorMaterial.reflectionTexture.renderList.push(cube3);  
@@ -277,11 +277,19 @@ function startBabylonJS() {
 
         cubeTest.position = new BABYLON.Vector3(13, 150, 10);
         cubeTest.applyGravity = true;
+        cubeTest.checkCollisions = true;
+
+
+
         // testing physics engine
 
         // cubeTest.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7});
 
-            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
+            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 50, restitution: 0.0 });
+
+            // camera.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
+
+            ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
 
         //ERROR -   Uncaught TypeError: Cannot use 'in' operator to search for 'friction' in 0.25
 
@@ -339,20 +347,10 @@ function startBabylonJS() {
     // GAme logic
     // Lose
     // I need the carmera to know when I hit the ground
-    var point = camera.position.clone();
-    point.y -= 0.5;
-    if (ground.intersectsPoint(point)) {
+    //var point = cubeTest.position.clone();
+    //point.y -= 0.5;
 
-            camera.onCollide = function() {
-            
-            started = false;
 
-            if(started === false){    
-            loser();
-            }
-        }
-
-    }
      
 
         
@@ -361,10 +359,6 @@ function startBabylonJS() {
         //camera.position = new BABYLON.Vector3(0, 10, 0);
         // change class name so game over div displays
 
-        
-
-
-        
 
         document.getElementById("gameOver").className = "";
         
@@ -393,6 +387,64 @@ function startBabylonJS() {
 
     // Collisions to check if player fell off 
     var checkCollisions = function() {
+
+
+        // if (BABYLON.Vector3.Distance(cubeTest.position, ground.position) < 1) {
+
+        //     loser();
+        //     //GOT this 
+
+        // }
+
+        //GOT this to work !!!
+
+        if (cubeTest.intersectsMesh(ground, true)) {
+            loser();
+
+
+        }
+
+        if (ground.intersectsMesh(ground, true)) {
+            //loser();
+
+
+        }
+
+        if (BABYLON.Vector3.Distance(cubeTest.position, ground.position) < 1) {
+
+         loser(); // only when physics turn false on ground
+        //     //GOT this 
+
+        }
+
+
+//NOTE -- to self -- could USE THIS CODE -- change ground to !ground - when cube is pushed  off player wins. 
+        var point = cubeTest.position;
+        //point.y -= 0.5;
+         if (ground.intersectsPoint(point)) {
+
+            loser();
+        }
+
+
+
+        //    if (BABYLON.Vector3.Distance(m.position, particleSystem.emitter.position) < 20) {
+
+        // if (ground.intersectsPoint(point)) {
+        //     //loser();
+        //         camera.onCollide = function() {
+                
+        //         started = false;
+
+        //         if(started === false){    
+        //         //loser();
+        //         }
+        //     }
+
+        // }
+
+
+
         // Target to match
         // if (BABYLON.Vector3.Distance(arcCamera.position, cube2.emitter) < 1.2) {
         //     loser();
