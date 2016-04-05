@@ -18,11 +18,26 @@ document.addEventListener("DOMContentLoaded", startBabylonJS, false);
 
 function startBabylonJS() {
     if (BABYLON.Engine.isSupported()) {
+
+
         canvas = document.getElementById("renderCanvas"); // we check the users brower to see if they support our engine.
 
         engine = new BABYLON.Engine(canvas, true);// we used the above var to create a new engine, activate it with "true";
+        //keeps the size of my window
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
 
          engine.enableOfflineSupport = false;
+
+         engine.displayLoadingUI();
+         engine.loadingUIBackgroundColor = "blue";
+         engine.loadingUIText = "HI THERE.... Loading your 3D galaxy. Please CLICK the above icon to start."
+         
+        
+
+         
+
 
     //--------- a scene MUST have a camera
     // or u get an error
@@ -40,12 +55,21 @@ function startBabylonJS() {
         
         scene.gravity = new BABYLON.Vector3(0, -0.1, 0);
 
+
+
         // now that I have gravity, next I set up physics
         //old depricated
         //scene.enablePhysics();
         //scene.setGravity(new BABYLON.Vector3(0,-10,0));
         
+    // canvas.addEventListener("mousedown", function (evt, pickResult) {
+    //         var pickResult = canvas.pick(evt.clientX, evt.clientY);
+    //         if (pickResult.hit ) {
+    //             engine.hideLoadingUI();
+    //         }
+    //     });
 
+    
         // scene.getPhysicsEngine().setGravity(new BABYLON.Vector3(0, -0.5, 0, new BABYLON.OimoJSPlugin()));
         
         //cannon.js:5756 Uncaught TypeError: Cannot read property 'calculateWorldAABB' of undefined
@@ -313,10 +337,12 @@ function startBabylonJS() {
         // BABYLON.PhysicsImpostor.HeightmapImpostor;
 
 
+         
 
     // -----------------------
         // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
         engine.runRenderLoop(function () {
+
             // .runRenderLoop will render every Frame
             // this is also were we put the game logic.
             cube.rotation.y += 0.01;
@@ -337,12 +363,15 @@ function startBabylonJS() {
         });
 
 
-    // document.getElementById("gameOver").addEventListener("click", function() {
-    //     started = true;
-    //     console.log('user clicked');
-    //     document.getElementById("gameOver").className = "hidden";
-    //     //direction = new BABYLON.Vector3(0, 0, 0);
-    // });
+    document.getElementById("babylonjsLoadingDiv").addEventListener("click", function() {
+        started = true;
+        console.log('user clicked');
+         engine.hideLoadingUI();
+
+
+        //document.getElementById("gameOver").className = "hidden";
+        //direction = new BABYLON.Vector3(0, 0, 0);
+    });
            
     // GAme logic
     // Lose
@@ -351,7 +380,24 @@ function startBabylonJS() {
     //point.y -= 0.5;
 
 
-     
+    //     canvas.addEventListener("mousedown", function(evt, pickResult) {
+        
+    //     console.log('user clicked');
+    //     if (pickResult.hit) {
+         
+    //     }
+        
+    // });
+    
+     // camera.onCollide = function() {
+     //        if(started === true){    
+     //        loser();
+     //        }
+
+     //    }
+
+           
+
 
         
     var loser = function () {
@@ -378,12 +424,22 @@ function startBabylonJS() {
     // };
 
 
-    // canvas.addEventListener("mousedown", function (evt) {
-    // var pickResult = scene.pick(evt.clientX, evt.clientY);
-    // if (pickResult.hit ) {
-    //     loser();
-    // }
-//});
+        //     canvas.addEventListener("mousedown", function (evt) {
+        //     var pickResult = scene.pick(evt.clientX, evt.clientY);
+        //     if (pickResult.hit ) {
+        //         loser();
+        //     }
+        // });
+
+     scene.onPointerDown = function (evt, pickResult) {
+        // if the click hits the ground object, we change the impact position
+        console.log('hit')
+        var pickResult = scene;
+
+        if (pickResult.hit) {
+            engine.hideLoadingUI();
+            }
+        };
 
     // Collisions to check if player fell off 
     var checkCollisions = function() {
