@@ -399,7 +399,8 @@ function startBabylonJS() {
         //GOT this to work !!!
 
         if (cubeTest.intersectsMesh(ground, true)) {
-            loser();
+            //loser(); //TURNED OFF FOR NON GAME MODE
+            //EXPLOER MODE
             //turn physics on ground off to work
 
 
@@ -424,7 +425,7 @@ function startBabylonJS() {
         //point.y -= 0.5;
          if (ground.intersectsPoint(point)) {
 
-            loser();
+            //loser(); TURNED OF FOR NON GAME MODE
         }
 
 
