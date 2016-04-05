@@ -2,19 +2,47 @@ body {
     background-color: gray;
 }
 
-  html, body {
-              width: 95%;
-              height: 95%;
+html, body {
+              width: 100%;
+              height: 100%;
               padding: 0;
-              margin: auto;
+              margin: 0;
               overflow: hidden;
               touch-action: none;
               /*stop brower from monitoring touch action of user now can use on mobile touch screen phone*/
-          }
-          #renderCanvas {
+}
+
+#renderCanvas {
 /*              background-color: black;
 */              border: 3px solid #73AD21;
 
-              width: 95%;
-              height: 95%;
-          }
+              width: 100%;
+              height: 100%;
+}
+
+
+/*tell the game over how to look and to be hidden at 1st*/
+#gameOver {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    font-size: 4.0em;
+    color: white;
+    font-family: "Segoe UI";
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#gameOverText {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    margin-top: -50px;
+    cursor: default;
+}
+
+.hidden {
+    display: none;
+}          
+
+/*---------------*/

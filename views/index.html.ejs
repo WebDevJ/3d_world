@@ -9,15 +9,36 @@
     
     <link rel="stylesheet" href="/css/styles.css" media="screen" title="no title" charset="utf-8">
 
-    <script src="/js/babylon.js"></script> <!-- our main lib we are runing, I added a console log so we know it is connecting.--> 
-    <script src="/js/hand.minified-1.2.js"></script> <!-- allows us to have touch assets -->
+    <!--<script src="http://www.babylonjs.com/cannon.js"></script> -->
+    <script src="http://www.babylonjs.com/oimo.js"></script>
+    <script src="http://www.babylonjs.com/babylon.js"></script>
+
+
+    <!--  <script src="/js/babylon.js"></script> -->
+    <script src="/js/cannon.js"></script>
+
+    <!-- our main lib we are runing, I added a console log so we know it is connecting.--> 
+
+    <script src="/js/hand.minified-1.2.js"></script>
+    <script src="Gamepad360v2.js"></script>
+    <!-- allows us to have touch assets -->
     <!-- <script src="/js/light.js"></script --> 
     <!-- set up for light assets -->
     <script src="/js/main.js"></script> <!-- this is our main file that we do most of our work.  -->
+
+
+
+    
     
   </head>
   <body>
     <p> babylonJS :-) </p>
+      <div id="gameOver" class="hidden">
+        <div id="gameOverText">You Landed safely YOU WIN ! </div>
+    </div>
       <canvas id="renderCanvas" width="600" height="600" ></canvas> <!-- the most important is the canvas we are viewing. rember that the above id# is being used in the main.js  -->
+
+
   </body>
+
   </html>
