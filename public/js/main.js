@@ -12,6 +12,9 @@ var light;
 var started = true;
 console.log(started);
 
+var g = document.getElementById.bind(document);//bind method see :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+
+
 
 
 document.addEventListener("DOMContentLoaded", startBabylonJS, false);
@@ -229,7 +232,7 @@ function startBabylonJS() {
     mirrorMaterial.reflectionTexture.renderList.push(cube);
 
 
-     cube.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, restitution: 0.0 });
+     cube.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 10, restitution: 0.0 });
 
 
     //----------
@@ -368,6 +371,20 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
 
 
          
+         //animation with cube 
+    //------------------------------------------
+    scene.registerBeforeRender(function () {
+     // .runRenderLoop will render every Frame
+            // this is also were we put the game logic.
+            cube.rotation.y += 0.01;
+            //we are rotating on every frame here 
+            cube.rotation.x += 0.01;
+        //The color is defined at run time with random()
+        cube.material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+        // gives me a random color for RGB each frame
+
+    });
+
 
     // -----------------------
         // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
@@ -426,8 +443,95 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
 
      //    }
 
-           
+    var winner = function () {
+        
+        //camera.position = new BABYLON.Vector3(0, 10, 0);
+        // change class name so game over div displays
 
+
+        document.getElementById("youWin").className = "";
+        
+        //
+        //console.log(gameOver);
+
+        //console.log( started +" started set to false , gameOver");
+
+      // ('#restartGame').click(function() {
+      //   
+      //   });
+
+
+
+     //      canvas.addEventListener("mousedown", function (evt) {
+     //        console.log('I clicked the winner box');
+     //        var pickResult = scene.pick(evt.clientX, evt.clientY);
+     //        if (pickResult.hit ) {
+     //            scene.reload();
+     //        }
+     //    });
+
+
+     //        canvas.onPointerDown = function (evt, pickResult) {
+     //            console.log('I clicked the winner box');
+        
+     //                if (pickResult.hit) {
+     //                    //loser();
+     //                }
+     //        };
+
+
+
+     //           canvas.addEventListener("mousedown", function (evt) {
+     //                            console.log('I clicked the winner box');
+
+     //        var pickResult = canvas.pick(evt.clientX, evt.clientY);
+     //        if (pickResult.hit ) {
+     //            loser();
+     //        }
+     //    });      
+
+
+
+
+     // scene.onPointerDown = function (evt, pickResult) {
+     //    // if the click hits the ground object, we change the impact position
+     //    console.log('hit')
+     //    var pickResult = scene;
+
+     //    if (pickResult.hit) {
+     //    engine.displayLoadingUI();
+     //        }
+     //    };
+
+
+
+      g("youWin").onclick= function() {
+         //scene.render();
+           g("youWin").style.display="none";
+        //engine.displayLoadingUI();
+         location.reload(); // reload screen
+
+
+        };
+
+
+
+
+    }; // //////////////////closed WINNER function
+
+
+   //  var sceneLoaded = function (sceneFile, babylonScene) {
+          
+   //        }
+      
+   // filesInput = new BABYLON.FilesInput(engine, null, canvas, sceneLoaded);
+
+   //  window.addEventListener("keydown", function (evt) {
+   //          // Press R to reload
+   //          if (evt.keyCode === 82) {
+   //              filesInput.reload();
+   //          }
+   //      });
 
         
     var loser = function () {
@@ -437,14 +541,26 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
 
 
         document.getElementById("gameOver").className = "";
+
+
+          g("gameOver").onclick= function() {
+         //scene.render();
+           g("gameOver").style.display="none";
+        //engine.displayLoadingUI();
+              //scene.reload();
+              //reload();
+               location.reload(); // reload screen 
+    
+        };// ///////////// closed event listener ONCLICK
         
+
         //
         //console.log(gameOver);
 
         console.log( started +" started set to false , gameOver");
 
         
-    };
+    };// //////////////// closed LOSER function
 
     //   scene.onPointerDown = function (evt, pickResult) {
         
@@ -461,15 +577,15 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
         //     }
         // });
 
-     scene.onPointerDown = function (evt, pickResult) {
-        // if the click hits the ground object, we change the impact position
-        console.log('hit')
-        var pickResult = scene;
+     // scene.onPointerDown = function (evt, pickResult) {
+     //    // if the click hits the ground object, we change the impact position
+     //    console.log('hit')
+     //    var pickResult = scene;
 
-        if (pickResult.hit) {
-            engine.hideLoadingUI();
-            }
-        };
+     //    if (pickResult.hit) {
+     //        engine.hideLoadingUI();
+     //        }
+     //    };
 
     // Collisions to check if player fell off 
     var checkCollisions = function() {
@@ -483,7 +599,7 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
         // }
 
         //GOT this to work !!!
-
+        // 1st test fo user
         if (cubeTest.intersectsMesh(ground, true)) {
             loser(); //TURN OFF FOR NON GAME MODE
             //EXPLOER MODE
@@ -492,16 +608,37 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
 
         }
 
+        //2nd test for user, win state
+         var point = cube.position.clone();
+        //point.y -= 0.5;
+        if (ground.intersectsPoint(point)) {
+            //loser();
+        }
+        // if you push the ball off the ground you win    
+
+        if (cube.intersectsMesh(ground, true)) {
+            
+
+            //loser(); //TURN OFF FOR NON GAME MODE
+            //EXPLOER MODE
+            //turn physics on ground off to work
+//if i click the ball this triggers
+
+        }
+
         if (ground.intersectsMesh(ground, true)) {
+            
+
+
             //loser();
 
 
         }
 
-        if (BABYLON.Vector3.Distance(cubeTest.position, ground.position) < 1) {
+        if (BABYLON.Vector3.Distance(cube.position, ground.position) < 1) {
 
-         loser(); // only when physics turn false on ground
-        //     //GOT this 
+         //loser(); // only when physics turn false on ground
+        //     //GOT this to work
 
         }
 
@@ -530,6 +667,16 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
         //     }
 
         // }
+
+           if (BABYLON.Vector3.Distance(cube.position, ground.position) > 52) {
+
+        
+            winner();
+                
+
+        }
+
+
 
 
 
