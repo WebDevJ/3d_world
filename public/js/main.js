@@ -30,7 +30,7 @@ function startBabylonJS() {
 
          engine.enableOfflineSupport = false;
 
-         engine.displayLoadingUI();
+         //engine.displayLoadingUI();
          engine.loadingUIBackgroundColor = "blue";
          engine.loadingUIText = "HI THERE.... Loading your 3D galaxy. Please CLICK the above icon to start."
          
@@ -53,8 +53,8 @@ function startBabylonJS() {
 
         //old depricated
         
-        scene.gravity = new BABYLON.Vector3(0, -0.1, 0);
-
+        scene.gravity = new BABYLON.Vector3(0, 0.1, 0);
+        // was -0.1
 
 
         // now that I have gravity, next I set up physics
@@ -220,13 +220,16 @@ function startBabylonJS() {
     // the color of object when light hits it is caled diffuseColor
     cubeMat.diffuseColor = new BABYLON.Color3.Red();
     // using .Color3 here to get red
-            cube.applyGravity = false;
+            cube.applyGravity = true;
 
 
 
     cubeMat.wireframe = true;
     //add adove mirror to sphere 
     mirrorMaterial.reflectionTexture.renderList.push(cube);
+
+
+     cube.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, restitution: 0.0 });
 
 
     //----------
@@ -305,15 +308,42 @@ function startBabylonJS() {
 
 
 
+//adding physics 4/8
+cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
+
+
+
+
         // testing physics engine
 
         // cubeTest.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7});
 
-            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 50, restitution: 0.0 });
+            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, restitution: 0.0 });
+
+
+    canvas.addEventListener("mousedown", function (evt) {
+        var pickResult = scene.pick(evt.clientX, evt.clientY);
+
+        if (pickResult.hit) {
+             var dir = pickResult.pickedPoint.subtract(scene.activeCamera.position);
+             dir.normalize();
+            cubeTest.applyImpulse(dir.scale(1), pickResult.pickedPoint);
+
+            console.log('game hit mesh testing');
+
+            //cube.applyImpulse(dir.scale(1), pickResult.pickedPoint);
+             pickResult.pickedMesh.applyImpulse(dir.scale(50), pickResult.pickedPoint);
+        }
+    });
 
             // camera.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
 //TURNED OFF for game state to work
-            // ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
+// ball will not bounce off ground instead end game
+
+
+             ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+
+
 
         //ERROR -   Uncaught TypeError: Cannot use 'in' operator to search for 'friction' in 0.25
 
@@ -363,15 +393,15 @@ function startBabylonJS() {
         });
 
 
-    document.getElementById("babylonjsLoadingDiv").addEventListener("click", function() {
-        started = true;
-        console.log('user clicked');
-         engine.hideLoadingUI();
+    // document.getElementById("babylonjsLoadingDiv").addEventListener("click", function() {
+    //     started = true;
+    //     console.log('user clicked I am hiding user screen');
+    //      engine.hideLoadingUI();
 
 
         //document.getElementById("gameOver").className = "hidden";
         //direction = new BABYLON.Vector3(0, 0, 0);
-    });
+    //});
            
     // GAme logic
     // Lose
@@ -455,7 +485,7 @@ function startBabylonJS() {
         //GOT this to work !!!
 
         if (cubeTest.intersectsMesh(ground, true)) {
-            //loser(); //TURNED OFF FOR NON GAME MODE
+            loser(); //TURN OFF FOR NON GAME MODE
             //EXPLOER MODE
             //turn physics on ground off to work
 
