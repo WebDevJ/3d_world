@@ -58,6 +58,25 @@ function startBabylonJS() {
         
         scene.gravity = new BABYLON.Vector3(0, 0.1, 0);
         // was -0.1
+    var space = new BABYLON.Sound("space", "assets/space.mp3", scene, null, { loop: true, autoplay: true });
+
+    var air = new BABYLON.Sound("air", "assets/air.mp3", scene, null);
+
+        // sound
+    //     var space = new BABYLON.Sound("space", "assets/space.mp3", scene, function () {
+    //     console.log("Sound is now ready to be played.");
+    //     // Play immediatly
+    //     space.play();
+    //     // Play after 3 seconds
+    //     //gunshot.play(3);
+    // });
+
+          window.addEventListener("keydown", function (evt) {
+        // Press space key to fire
+        if (evt.keyCode === 37 || evt.keyCode === 39) {
+            air.play();
+        }
+    });
 
 
         // now that I have gravity, next I set up physics
@@ -166,7 +185,7 @@ function startBabylonJS() {
     universeMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     universe.material = universeMaterial;
     // so you don't fall out my world / galaxy  
-    universe.checkCollisions = true;
+    //universe.checkCollisions = true;
 
 
     // creating stars, hope this works
@@ -668,7 +687,7 @@ cubeTest.gravity = new BABYLON.Vector3(0, 3, 0);
 
         // }
 
-           if (BABYLON.Vector3.Distance(cube.position, ground.position) > 52) {
+           if (BABYLON.Vector3.Distance(cube.position, ground.position) > 50) {
 
         
             winner();
