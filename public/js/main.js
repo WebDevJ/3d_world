@@ -12,17 +12,35 @@ var light;
 var started = true;
 console.log(started);
 
+var g = document.getElementById.bind(document);//bind method see :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+
+
 
 
 document.addEventListener("DOMContentLoaded", startBabylonJS, false);
 
 function startBabylonJS() {
     if (BABYLON.Engine.isSupported()) {
+
+
         canvas = document.getElementById("renderCanvas"); // we check the users brower to see if they support our engine.
 
         engine = new BABYLON.Engine(canvas, true);// we used the above var to create a new engine, activate it with "true";
+        //keeps the size of my window
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
 
          engine.enableOfflineSupport = false;
+
+         engine.displayLoadingUI();
+         engine.loadingUIBackgroundColor = "blue";
+         engine.loadingUIText = "Hello THERE.... Loading your 3D galaxy.  The Objective is to use the mouse to direct the ball out of the maze. After this loading screen you will Follow a green arrow pointing down to the maze. Use the arrow keys on your keyboard to move around and the mouse to look in any direction. Please CLICK the icon above to start."
+         
+        
+
+         
+
 
     //--------- a scene MUST have a camera
     // or u get an error
@@ -38,14 +56,42 @@ function startBabylonJS() {
 
         //old depricated
         
-        scene.gravity = new BABYLON.Vector3(0, -0.1, 0);
+        scene.gravity = new BABYLON.Vector3(0, 0.1, 0);
+        // was -0.1
+    var space = new BABYLON.Sound("space", "assets/space.mp3", scene, null, { loop: true, autoplay: true });
+
+    var air = new BABYLON.Sound("air", "assets/air.mp3", scene, null);
+
+        // sound
+    //     var space = new BABYLON.Sound("space", "assets/space.mp3", scene, function () {
+    //     console.log("Sound is now ready to be played.");
+    //     // Play immediatly
+    //     space.play();
+    //     // Play after 3 seconds
+    //     //gunshot.play(3);
+    // });
+
+          window.addEventListener("keydown", function (evt) {
+        // Press space key to fire
+        if (evt.keyCode === 37 || evt.keyCode === 39) {
+            air.play();
+        }
+    });
+
 
         // now that I have gravity, next I set up physics
         //old depricated
         //scene.enablePhysics();
         //scene.setGravity(new BABYLON.Vector3(0,-10,0));
         
+    // canvas.addEventListener("mousedown", function (evt, pickResult) {
+    //         var pickResult = canvas.pick(evt.clientX, evt.clientY);
+    //         if (pickResult.hit ) {
+    //             engine.hideLoadingUI();
+    //         }
+    //     });
 
+    
         // scene.getPhysicsEngine().setGravity(new BABYLON.Vector3(0, -0.5, 0, new BABYLON.OimoJSPlugin()));
         
         //cannon.js:5756 Uncaught TypeError: Cannot read property 'calculateWorldAABB' of undefined
@@ -107,18 +153,33 @@ function startBabylonJS() {
 
     // ----------------------- floor
     //var ground = BABYLON.Mesh.CreateGround("name", sizeOfFloor, scene);
-        var ground = new BABYLON.Mesh.CreateGround("ground", 52, 52, 12, scene);
-             // NOT sure may need box for physics to work with collsions
-    // var ground = new BABYLON.Mesh.CreateBox("ground", 52, scene);  
 
-     var a =   ground.checkCollisions = true;
-    // reflections on the meshes needs to have mirror applied to ground mesh
-        var mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
-        mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
-        mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true); //Create a mirror texture
-        mirrorMaterial.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, 0.0);
-        mirrorMaterial.reflectionTexture.level = 0.6;//Select the level (0.0 > 1.0) of the reflection
-        ground.material = mirrorMaterial;
+var ground = new BABYLON.Mesh.CreateGround("ground", 52, 52, 12, scene);
+    //          // NOT sure may need box for physics to work with collsions
+
+    // // reflections on the meshes needs to have mirror applied to ground mesh
+       
+        // var ground = BABYLON.Mesh.CreateGroundFromHeightMap("ground", "assets/heightMap.png", 100, 100, 100, 0, 10, scene, false);
+        var groundMaterial = new BABYLON.StandardMaterial("ground", scene);
+        groundMaterial.diffuseTexture = new BABYLON.Texture("assets/ground.jpg", scene);
+        groundMaterial.diffuseTexture.uScale = 6;
+        groundMaterial.diffuseTexture.vScale = 6;
+        groundMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        //ground.position.y = -9.05;
+        ground.material = groundMaterial;
+
+     ground.checkCollisions = true;
+
+    // var ray = new BABYLON.Ray(new BABYLON.Vector3(cube.position.x, ground.getBoundingInfo().boundingBox.maximumWorld.y + 1, cube.position.z),
+    //      new BABYLON.Vector3(0, -1, 0)); 
+
+     //    var mirrorMaterial = new BABYLON.StandardMaterial("mirrorMaterial", scene);
+     //    mirrorMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
+     //    mirrorMaterial.reflectionTexture = new BABYLON.MirrorTexture("mirror", 1024, scene, true); //Create a mirror texture
+     //    mirrorMaterial.reflectionTexture.mirrorPlane = new BABYLON.Plane(0, -1.0, 0, 0.0);
+     //   mirrorMaterial.reflectionTexture.level = 0.6;//Select the level (0.0 > 1.0) of the reflection
+     // ground.material = mirrorMaterial;
+
 
 
         // var groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
@@ -139,7 +200,7 @@ function startBabylonJS() {
     universeMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     universe.material = universeMaterial;
     // so you don't fall out my world / galaxy  
-    universe.checkCollisions = true;
+    //universe.checkCollisions = true;
 
 
     // creating stars, hope this works
@@ -163,7 +224,7 @@ function startBabylonJS() {
     myStars.color1 = new BABYLON.Color4(0, 0, 0, 1);
     myStars.color2 = new BABYLON.Color4(1, 1, 1, 1);
     myStars.gravity = new BABYLON.Vector3(0, 5, 0);
-    myStars.emitter = new BABYLON.Vector3(0, -2, 0);
+    myStars.emitter = new BABYLON.Vector3(0, 0, 0);
     myStars.start();
     //wow it worked
 
@@ -186,7 +247,7 @@ function startBabylonJS() {
         // var cube = new BABYLON.Mesh.CreateBox("box", 2, scene);
     var cube = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
 
-        cube.position = new BABYLON.Vector3(0, 3, 0);
+        cube.position = new BABYLON.Vector3(0, 39, 0);
  
         cube.checkCollisions = true;
     // add materials to meshes
@@ -196,48 +257,147 @@ function startBabylonJS() {
     // the color of object when light hits it is caled diffuseColor
     cubeMat.diffuseColor = new BABYLON.Color3.Red();
     // using .Color3 here to get red
-            cube.applyGravity = false;
+            cube.applyGravity = true;
 
 
 
     cubeMat.wireframe = true;
     //add adove mirror to sphere 
-    mirrorMaterial.reflectionTexture.renderList.push(cube);
+    //mirrorMaterial.reflectionTexture.renderList.push(cube);
+
+     cube.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 10, restitution: 0.0 });
 
 
     //----------
         var cube2 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
-        cube2.position = new BABYLON.Vector3(-5, 1.5, 0);
+        cube2.position = new BABYLON.Vector3(-5, 7, 0);
  
         cube2.checkCollisions = true;
 
     var cubeMat2 = new BABYLON.StandardMaterial("cubeMat2", scene);
     cube2.material = cubeMat2;
-    // cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
-    cubeMat2.diffuseTexture = new BABYLON.Texture("assets/wood.jpg", scene);
+    //cubeMat2.diffuseColor = new BABYLON.Color3.Blue();   
+    cubeMat2.diffuseTexture = new BABYLON.Texture("assets/ground.jpg", scene);
     //addd mirror refelection
-    mirrorMaterial.reflectionTexture.renderList.push(cube2);  
+   // mirrorMaterial.reflectionTexture.renderList.push(cube2);  
 
     //----------
         var cube3 = new BABYLON.Mesh.CreateBox("box", 2, scene);
 
-        cube3.position = new BABYLON.Vector3(5, 1.5, 0);
+        cube3.position = new BABYLON.Vector3(5, 7, 0);
 
         cube3.checkCollisions = true;
 
     var cubeMat3 = new BABYLON.StandardMaterial("cubeMat3", scene);
     cube3.material = cubeMat3;
-     cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
-    cubeMat3.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene);
+     //cubeMat3.diffuseColor = new BABYLON.Color3.Blue();
+    //cubeMat3.bumpTexture = new BABYLON.Texture("assets/ground.jpg", scene);
+    
+    cubeMat3.diffuseTexture = new BABYLON.Texture("assets/ground.jpg", scene);
     //add adove mirror to cube 
-    mirrorMaterial.reflectionTexture.renderList.push(cube3);  
+    //mirrorMaterial.reflectionTexture.renderList.push(cube3);  
 
 
 
+//var box = BABYLON.MeshBuilder.CreateBox("box", {height: 5, faceColors: myColors}, scene);
+    // var cube4 = new BABYLON.Mesh.CreateBox("wall", 5, scene);
+
+    //     cube4.position = new BABYLON.Vector3(9, 1, 9);
+
+    //     cube4.checkCollisions = true;
+
+    // var cubeMat4 = new BABYLON.StandardMaterial("cubeMat4", scene);
+    // cube4.material = cubeMat4;
+    //  cubeMat4.diffuseColor = new BABYLON.Color3.Gray();
+    // cubeMat4.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+    // cube4.applyGravity = true;
+    // cube4.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
 
 
- 
+
+       var angle = 0;
+       var angle2 = 0; 
+        for (var index = 0; index < 10; index++) {
+            var brick = BABYLON.Mesh.CreateBox("brick" + index, 3, scene);
+            brick.position.y = 1;
+            brick.position.x = 10 * Math.cos(angle);
+            brick.position.z = 10 * Math.sin(angle);
+            angle -= Math.PI / 5;
+            brick.diffuseColor = new BABYLON.Color3.Gray();
+            brick.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+            brick.checkCollisions = true;
+        brick.applyGravity = true;
+        brick.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+            var mat = new BABYLON.StandardMaterial("default" + index, scene);
+            brick.material = mat;
+        }
+
+
+        for (var index = 0; index < 10; index++) {
+            var brick = BABYLON.Mesh.CreateBox("brick" + index, 3, scene);
+            brick.position.y = 1;
+            brick.position.x = 15 * Math.cos(angle);
+            brick.position.z = 15 * Math.sin(angle);
+            angle -= Math.PI / 4;
+            brick.diffuseColor = new BABYLON.Color3.Gray();
+            brick.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+            brick.checkCollisions = true;
+        brick.applyGravity = true;
+        brick.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+            var mat = new BABYLON.StandardMaterial("default" + index, scene);
+            brick.material = mat;
+        }
+
+        for (var index = 0; index < 10; index++) {
+            var brick = BABYLON.Mesh.CreateBox("brick" + index, 3, scene);
+            brick.position.y = 1;
+            brick.position.x = 15 * Math.cos(angle);
+            brick.position.z = 15 * Math.sin(angle);
+            angle -= Math.PI / 2.5;
+            brick.diffuseColor = new BABYLON.Color3.Gray();
+            brick.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+            brick.checkCollisions = true;
+        brick.applyGravity = true;
+        brick.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+            var mat = new BABYLON.StandardMaterial("default" + index, scene);
+            brick.material = mat;
+        }
+
+
+        for (var index = 0; index < 10; index++) {
+            var brick = BABYLON.Mesh.CreateBox("brick" + index, 3, scene);
+            brick.position.y = 1;
+            brick.position.x = 20 * Math.cos(angle);
+            brick.position.z = 20 * Math.sin(angle);
+            angle -= Math.PI / 2;
+            brick.scaling.x = 4;
+            brick.diffuseColor = new BABYLON.Color3.Gray();
+            brick.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+            brick.checkCollisions = true;
+        brick.applyGravity = true;
+        brick.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+            var mat = new BABYLON.StandardMaterial("default" + index, scene);
+            brick.material = mat;
+        }
+
+
+        for (var index = 0; index < 10; index++) {
+            var brick = BABYLON.Mesh.CreateBox("brick" + index, 3, scene);
+            brick.position.y = 1;
+            brick.position.x = 23 * Math.cos(angle);
+            brick.position.z = 23 * Math.sin(angle);
+            angle -= Math.PI / 5;
+            brick.diffuseColor = new BABYLON.Color3.Black();
+            brick.bumpTexture = new BABYLON.Texture("assets/normalMap.jpg", scene); 
+            var mat = new BABYLON.StandardMaterial("default" + index, scene);
+            brick.material = mat;
+            brick.checkCollisions = true;
+        brick.applyGravity = true;
+        brick.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+        }
+
+        
 
     // cube.onPointerDown = function (pickResult) {
     //             // if the click hits square execute:
@@ -273,23 +433,48 @@ function startBabylonJS() {
  //        });
     //------------------------------------
 
-    var cubeTest = BABYLON.Mesh.CreateSphere("sphere", 16, 2.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
+    var spriteManagerPlayer = new BABYLON.SpriteManager("playerManager", "assets/arrow.png", 1, 285, scene);
+    var player = new BABYLON.Sprite("player", spriteManagerPlayer);
+    player.position = new BABYLON.Vector3(13, 150, 12);
+    player.size = 3;
 
-        cubeTest.position = new BABYLON.Vector3(13, 150, 10);
-        cubeTest.applyGravity = true;
-        cubeTest.checkCollisions = true;
+    var cubeTest = BABYLON.Mesh.CreateSphere("sphere", 16, 1.5, scene, false,  BABYLON.Mesh.DEFAULTSIDE);
+///////////////////////////
+//         cubeTest.position = new BABYLON.Vector3(13, 150, 10);
+//         //cubeTest.applyGravity = true;
+//         cubeTest.checkCollisions = true;
+
+// //adding physics 4/8
+
+//             cubeTest.gravity = new BABYLON.Vector3(0, 0, 0);
 
 
+//             cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
+//////////////////////////////////////
 
-        // testing physics engine
+    canvas.addEventListener("mousedown", function (evt) {
+        var pickResult = scene.pick(evt.clientX, evt.clientY);
 
-        // cubeTest.setPhysicsState({impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 1, friction: 0.5, restitution: 0.7});
+        if (pickResult.hit) {
+             var dir = pickResult.pickedPoint.subtract(scene.activeCamera.position);
+             dir.normalize();
+            cubeTest.applyImpulse(dir.scale(1), pickResult.pickedPoint);
 
-            cubeTest.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 50, restitution: 0.0 });
+            console.log('game hit mesh testing');
+
+            //cube.applyImpulse(dir.scale(1), pickResult.pickedPoint);
+             pickResult.pickedMesh.applyImpulse(dir.scale(50), pickResult.pickedPoint);
+        }
+    });
 
             // camera.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 100, restitution: 0.0 });
 //TURNED OFF for game state to work
-            // ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.SphereImpostor, mass: 0, restitution: 0.0 });
+// ball will not bounce off ground instead end game
+
+
+             ground.setPhysicsState({ impostor: BABYLON.PhysicsEngine.BoxImpostor, mass: 0, restitution: 0.0 });
+
+
 
         //ERROR -   Uncaught TypeError: Cannot use 'in' operator to search for 'friction' in 0.25
 
@@ -313,18 +498,51 @@ function startBabylonJS() {
         // BABYLON.PhysicsImpostor.HeightmapImpostor;
 
 
-
-    // -----------------------
-        // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
-        engine.runRenderLoop(function () {
-            // .runRenderLoop will render every Frame
+         
+         //animation with cube 
+    //------------------------------------------
+    scene.registerBeforeRender(function () {
+     // .runRenderLoop will render every Frame
             // this is also were we put the game logic.
             cube.rotation.y += 0.01;
             //we are rotating on every frame here 
             cube.rotation.x += 0.01;
+        //The color is defined at run time with random()
+        cube.material.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+        // gives me a random color for RGB each frame
 
-            cube2.rotation.y += 0.03;
+        // cube2 float around in a circle 
+            cube2.position.x = 10 * Math.cos(angle);
+            cube2.position.z = 10 * Math.sin(angle);
             cube3.rotation.x += 0.03;
+            angle += 0.01;
+
+            cube2.position.y += 0.07;
+            cube2.position.y -= 0.07;
+
+            // player.position.x = 0 * Math.cos(angle2);
+            // player.position.y = 0 * Math.sin(angle2);
+            // angle2 += 0.01;
+
+    });
+
+
+    // -----------------------
+        // Lastly, Once the scene is loaded. you have to set a render loop to see it (render) the mesh or object. 
+        engine.runRenderLoop(function () {
+
+            // .runRenderLoop will render every Frame
+            // this is also were we put the game logic.
+           
+
+            cube.rotation.y += 0.01;
+            //we are rotating on every frame here 
+            cube.rotation.x += 0.01;
+
+            //cube2.rotation.y += 0.03;
+            cube3.rotation.x += 0.03;
+            cube2.position.y += 0.07;
+            cube2.position.y -= 0.07;
 
             scene.render();
 
@@ -336,13 +554,16 @@ function startBabylonJS() {
 
         });
 
+// hide loading screen
+    document.getElementById("babylonjsLoadingDiv").addEventListener("click", function() {
+        started = true;
+        console.log('user clicked I am hiding user screen');
+         engine.hideLoadingUI();
 
-    // document.getElementById("gameOver").addEventListener("click", function() {
-    //     started = true;
-    //     console.log('user clicked');
-    //     document.getElementById("gameOver").className = "hidden";
-    //     //direction = new BABYLON.Vector3(0, 0, 0);
-    // });
+
+        document.getElementById("gameOver").className = "hidden";
+        //direction = new BABYLON.Vector3(0, 0, 0);
+    });
            
     // GAme logic
     // Lose
@@ -351,7 +572,111 @@ function startBabylonJS() {
     //point.y -= 0.5;
 
 
-     
+    //     canvas.addEventListener("mousedown", function(evt, pickResult) {
+        
+    //     console.log('user clicked');
+    //     if (pickResult.hit) {
+         
+    //     }
+        
+    // });
+    
+     // camera.onCollide = function() {
+     //        if(started === true){    
+     //        loser();
+     //        }
+
+     //    }
+
+    var winner = function () {
+        
+        //camera.position = new BABYLON.Vector3(0, 10, 0);
+        // change class name so game over div displays
+
+
+        document.getElementById("youWin").className = "";
+        
+        //
+        //console.log(gameOver);
+
+        //console.log( started +" started set to false , gameOver");
+
+      // ('#restartGame').click(function() {
+      //   
+      //   });
+
+
+
+     //      canvas.addEventListener("mousedown", function (evt) {
+     //        console.log('I clicked the winner box');
+     //        var pickResult = scene.pick(evt.clientX, evt.clientY);
+     //        if (pickResult.hit ) {
+     //            scene.reload();
+     //        }
+     //    });
+
+
+     //        canvas.onPointerDown = function (evt, pickResult) {
+     //            console.log('I clicked the winner box');
+        
+     //                if (pickResult.hit) {
+     //                    //loser();
+     //                }
+     //        };
+
+
+
+     //           canvas.addEventListener("mousedown", function (evt) {
+     //                            console.log('I clicked the winner box');
+
+     //        var pickResult = canvas.pick(evt.clientX, evt.clientY);
+     //        if (pickResult.hit ) {
+     //            loser();
+     //        }
+     //    });      
+
+
+
+
+     // scene.onPointerDown = function (evt, pickResult) {
+     //    // if the click hits the ground object, we change the impact position
+     //    console.log('hit')
+     //    var pickResult = scene;
+
+     //    if (pickResult.hit) {
+     //    engine.displayLoadingUI();
+     //        }
+     //    };
+
+
+
+      g("youWin").onclick= function() {
+         //scene.render();
+           g("youWin").style.display="none";
+        //engine.displayLoadingUI();
+         location.reload(); // reload screen
+
+
+        };
+
+
+
+
+    }; // //////////////////closed WINNER function
+
+
+   //  var sceneLoaded = function (sceneFile, babylonScene) {
+          
+   //        }
+      
+   // filesInput = new BABYLON.FilesInput(engine, null, canvas, sceneLoaded);
+
+   //  window.addEventListener("keydown", function (evt) {
+   //          // Press R to reload
+   //          if (evt.keyCode === 82) {
+   //              filesInput.reload();
+   //          }
+   //      });
 
         
     var loser = function () {
@@ -361,14 +686,26 @@ function startBabylonJS() {
 
 
         document.getElementById("gameOver").className = "";
+
+
+          g("gameOver").onclick= function() {
+         //scene.render();
+           g("gameOver").style.display="none";
+        //engine.displayLoadingUI();
+              //scene.reload();
+              //reload();
+               location.reload(); // reload screen 
+    
+        };// ///////////// closed event listener ONCLICK
         
+
         //
         //console.log(gameOver);
 
         console.log( started +" started set to false , gameOver");
 
         
-    };
+    };// //////////////// closed LOSER function
 
     //   scene.onPointerDown = function (evt, pickResult) {
         
@@ -378,12 +715,22 @@ function startBabylonJS() {
     // };
 
 
-    // canvas.addEventListener("mousedown", function (evt) {
-    // var pickResult = scene.pick(evt.clientX, evt.clientY);
-    // if (pickResult.hit ) {
-    //     loser();
-    // }
-//});
+        //     canvas.addEventListener("mousedown", function (evt) {
+        //     var pickResult = scene.pick(evt.clientX, evt.clientY);
+        //     if (pickResult.hit ) {
+        //         loser();
+        //     }
+        // });
+
+     // scene.onPointerDown = function (evt, pickResult) {
+     //    // if the click hits the ground object, we change the impact position
+     //    console.log('hit')
+     //    var pickResult = scene;
+
+     //    if (pickResult.hit) {
+     //        engine.hideLoadingUI();
+     //        }
+     //    };
 
     // Collisions to check if player fell off 
     var checkCollisions = function() {
@@ -397,25 +744,48 @@ function startBabylonJS() {
         // }
 
         //GOT this to work !!!
+        // 1st test fo user
 
+//////////////////////// TURNED OFF loser() when physics is tunned off for cubeTest       
         if (cubeTest.intersectsMesh(ground, true)) {
-            //loser(); //TURNED OFF FOR NON GAME MODE
+            //loser(); //TURN OFF FOR NON GAME MODE
             //EXPLOER MODE
             //turn physics on ground off to work
 
 
         }
+/////////////////////////
+        //2nd test for user, win state
+         var point = cube.position.clone();
+        //point.y -= 0.5;
+        if (ground.intersectsPoint(point)) {
+            //loser();
+        }
+        // if you push the ball off the ground you win    
+
+        if (cube.intersectsMesh(ground, true)) {
+            
+
+            //loser(); //TURN OFF FOR NON GAME MODE
+            //EXPLOER MODE
+            //turn physics on ground off to work
+//if i click the ball this triggers
+
+        }
 
         if (ground.intersectsMesh(ground, true)) {
+            
+
+
             //loser();
 
 
         }
 
-        if (BABYLON.Vector3.Distance(cubeTest.position, ground.position) < 1) {
+        if (BABYLON.Vector3.Distance(cube.position, ground.position) < 1) {
 
-         loser(); // only when physics turn false on ground
-        //     //GOT this 
+         //loser(); // only when physics turn false on ground
+        //     //GOT this to work
 
         }
 
@@ -444,6 +814,16 @@ function startBabylonJS() {
         //     }
 
         // }
+
+           if (BABYLON.Vector3.Distance(cube.position, ground.position) > 50) {
+
+        
+            winner();
+                
+
+        }
+
+
 
 
 

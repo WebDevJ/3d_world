@@ -22,7 +22,7 @@
     <!-- our main lib we are runing, I added a console log so we know it is connecting.--> 
 
     <script src="/js/hand.minified-1.2.js"></script>
-    <script src="Gamepad360v2.js"></script>
+    <script src="/js/Gamepad360v2.js"></script>
     <!-- allows us to have touch assets -->
     <!-- <script src="/js/light.js"></script --> 
     <!-- set up for light assets -->
@@ -36,8 +36,21 @@
   <body>
     <!-- <p> 3dWorld, Made with babylonJS and Express, Enjoy.  :-) </p>--> 
       <div id="gameOver" class="hidden">
-        <div id="gameOverText">You Landed safely YOU WIN ! </div>
+        <div id="gameOverText">
+          <p>You let The ball touch the ground. <br> YOU LOSE !!! <br><br> Next Time Click the ball with the mouse button to kick it away from the ground</p>
+        </div>
     </div>
+
+
+    
+
+    <div id="youWin" class="hidden">
+        <div id="gameOverText">
+          <p>You Made it out the maze.<br>YOU WIN !!!</p>
+        </div>
+    </div>
+
+
       <canvas id="renderCanvas" width="600" height="600" ></canvas> <!-- the most important is the canvas we are viewing. rember that the above id# is being used in the main.js  -->
 
 
