@@ -1,4 +1,4 @@
-//Please note this code below is a reffrance from the xbox360pad devloper website, I tried to used this but it never worked on my project. Just want to make this clear, Leaving it here but commenting out this section. My work around was mapping the controller to my keyboard.
+//Please note this code below is a reffrance from the BABYLON devloper website, I tried to used this but it never worked on my project. Just want to make this clear, Leaving it here but commenting out this section. My work around was mapping the controller to my keyboard.
 // so sad. 
 
 // var xbox360pad;
